@@ -1,1 +1,2 @@
-This is system that automatically check the attendance of student in a lecture room!!
+The project 'I'm Here' provides a attendance management service automatically
+using a face recognition tech.
