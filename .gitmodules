@@ -1,3 +1,6 @@
 [submodule "Web"]
 	path = Web
 	url = https://github.com/WoojinByun/Web.git
+[submodule "face_recognition"]
+	path = face_recognition
+	url = git@github.com:Dongmin-Cho/face_recognition.git
