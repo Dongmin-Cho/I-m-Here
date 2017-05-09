@@ -6,4 +6,7 @@
 build
 dist
 *.egg-info/
-
+*.log
+*/CMakeFiles/*
+*/Makefile
+*.cmake
