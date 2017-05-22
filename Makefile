@@ -1,4 +1,4 @@
 install:
-	cd face_recognition/src/; mkdir build; cd build; cmake ..; make; cp ../*.dat .;
+	cd face_recognition/; make install; cd ..;cd caffe/;mkdir build;cd build;cmake ..;make;make;cd ../../;
 clean:
-	rm -rf face_recognition/src/build;
+	cd face_recognition/;make clean;cd ..;cd caffe/;make clean;cd ..;
