@@ -47,7 +47,7 @@ int extract_feature(string in_file_path, string out_file_path)
     float *blob = NULL;
     blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
 	//int search_dot = in_file.find(".");
-	in_file = in_file.substr(in_file.find_last_of("/"),in_file.find_last_of(".")); //remove all except file name
+	in_file = in_file.substr(in_file.find_last_of("/"),in_file.find_last_of(".")-in_file.find_last_of("/")); //remove all except file name
 	out_file = out_file + in_file +".txt";
 	std::ofstream out(out_file.c_str());
 	if(out.is_open())
