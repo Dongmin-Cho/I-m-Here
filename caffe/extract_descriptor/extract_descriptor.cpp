@@ -33,9 +33,9 @@ int extract_feature(string in_file_path, string out_file_path)
 {
 	string in_file = in_file_path;
 	string out_file = out_file_path;
-	string trained = "../../extract_descriptor/vgg_face.caffemodel";
-	string deply = "../../extract_descriptor/vgg_face_deploy.prototxt";
-	string meandata = "../../extract_descriptor/mean.binaryproto";
+	string trained = "/home/wj/work/caffe/extract_descriptor/vgg_face.caffemodel";
+	string deply = "/home/wj/work/caffe/extract_descriptor/vgg_face_deploy.prototxt";
+	string meandata = "/home/wj/work/caffe/extract_descriptor/mean.binaryproto";
     string blobname = "fc6";
     Classifier classifier(deply, trained, meandata, "none");
     int ndepth = 1;
