@@ -12,6 +12,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #endif  // USE_OPENCV
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing.h>
+#include <dlib/image_io.h>
 
 #include <algorithm>
 #include <iosfwd>
@@ -25,24 +29,66 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <dlib/opencv.h>
 #include "classification.h"
-
+#include "calc_face_img.h"
 using namespace std;
+using namespace dlib;
 
 int extract_feature(string in_file_path, string out_file_path)
 {
 	string in_file = in_file_path;
 	string out_file = out_file_path;
-	string trained = "/home/wj/work/caffe/extract_descriptor/vgg_face.caffemodel";
-	string deply = "/home/wj/work/caffe/extract_descriptor/vgg_face_deploy.prototxt";
+	string trained = "/home/wj/work/caffe/extract_descriptor/fitnet.caffemodel";
+	string deply = "/home/wj/work/caffe/extract_descriptor/deploy.prototxt";
 	string meandata = "/home/wj/work/caffe/extract_descriptor/mean.binaryproto";
-    string blobname = "fc6";
+    string blobname = "fc7";
     Classifier classifier(deply, trained, meandata, "none");
-    int ndepth = 1;
+    int ndepth = 5;
     int ndim = 4096;
-    int nimsz = 224;
-    cv::Mat faceimg = cv::imread(in_file);
+    int nimsz = 100;
+    cv::Mat faceimg;// = cv::imread(in_file);
+    
+    frontal_face_detector detector = get_frontal_face_detector();
+    shape_predictor sp;
+    deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
+
+    array2d<rgb_pixel> img;
+    load_image(img, in_file_path); 
+    
+    pyramid_up(img);
+
+    std::vector<rectangle> dets = detector(img);
+
+    std::vector<full_object_detection> shapes;
+    std::vector<rectangle> rect;
+
+    for (unsigned long j = 0; j < dets.size(); ++j)
+    {
+        full_object_detection shape = sp(img, dets[j]);
+        shapes.push_back(shape);
+    }
+
+    for (size_t k = 0; k < shapes.size(); k++)
+    {
+        float sum_left_x = 0;
+        float sum_left_y = 0;
+        for(size_t left = 36; left < 47; left ++)
+        {
+            sum_left_x += shapes[k].part(left).x;
+            sum_left_y += shapes[k].part(left).y;
+        }
+        float sum_right_x = 0;
+        float sum_right_y = 0;
+        for(size_t right = 42; right <= 47; right ++)
+        {
+            sum_right_x += shapes[k].part(right).x();
+            sum_right_y += shapes[k].part(right).y();
+        }
+    cv::Point2f eye_loc_L(sum_left_x/6, sum_left_y/6), eye_loc_R(sum_right_x/6, sum_right_y/6);
+    faceimg = toMat(img);
     cv::Mat input;
+    faceimg = _cropFaceImagebyEYE(faceimg, eye_loc_L, eye_loc_R, 100, 100, 0.4f, 0.38f);
     cv::resize(faceimg, input, cv::Size(nimsz, nimsz));
     float *blob = NULL;
     blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);

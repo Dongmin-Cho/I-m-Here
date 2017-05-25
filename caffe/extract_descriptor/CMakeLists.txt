@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 find_package(Caffe)
 include_directories(extract_descriptor)
 
-set(SOURCE_FILES extract_descriptor.cpp classification.cpp)
+set(SOURCE_FILES extract_descriptor.cpp classification.cpp crop_face_img)
 #set(LIBS ./)
 
 add_executable(extract_descriptor ${SOURCE_FILES})
