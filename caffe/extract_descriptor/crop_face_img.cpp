@@ -27,6 +27,23 @@
 #include <string>
 #include <sstream>
 
+using namespace cv;
+using namespace std;
+Mat _eye2cvMat(Point2f lp, Point2f rp)
+{
+	//Mat co = Mat::ones(3, 68, CV_32FC1);
+	Mat_<double> co(3, 2);
+
+	co.at<double>(0, 0) = lp.x;
+	co.at<double>(1, 0) = lp.y;
+	co.at<double>(2, 0) = 1.f;
+
+	co.at<double>(0, 1) = rp.x;
+	co.at<double>(1, 1) = rp.y;
+	co.at<double>(2, 1) = 1.f;
+
+	return co;
+}
 Mat _cropFaceImagebyEYE(Mat inIm, Point2f EyelocL, Point2f EyelocR, int cropWidth, int cropHeight, float feyewidRatio, float feyehLevel)
 {
 	Mat cropFace, gim, tim;
@@ -133,7 +150,14 @@ Mat _cropFaceImagebyEYE(Mat inIm, Point2f EyelocL, Point2f EyelocR, int cropWidt
 	ny = floor(EyelocL.y - cropHeight * feyehLevel);
 	Rect nFaceRect; nFaceRect.x = nx; nFaceRect.y = ny; nFaceRect.width = cropWidth; nFaceRect.height = cropHeight;
 	if (nx < 0 || ny < 0 || nx + cropWidth > rotateImg.cols || ny + cropHeight > rotateImg.rows){
-		return cropFace;
+        cout<<"========="<<endl;
+        cout << "nx        : " << nx << endl;
+        cout << "ny        : " << ny << endl;
+        cout << "cropWidth : " << cropWidth << endl;
+        cout << "cols      : " << rotateImg.cols << endl;
+        cout << "rows      : " << rotateImg.rows << endl;
+        cout<<"========="<<endl;
+        return cropFace;
 	}
 	Mat temp = rotateImg(nFaceRect);
 	cropFace = temp.clone();
@@ -142,18 +166,4 @@ Mat _cropFaceImagebyEYE(Mat inIm, Point2f EyelocL, Point2f EyelocR, int cropWidt
 }
 
 
-Mat _eye2cvMat(Point2f lp, Point2f rp)
-{
-	//Mat co = Mat::ones(3, 68, CV_32FC1);
-	Mat_<double> co(3, 2);
 
-	co.at<double>(0, 0) = lp.x;
-	co.at<double>(1, 0) = lp.y;
-	co.at<double>(2, 0) = 1.f;
-
-	co.at<double>(0, 1) = rp.x;
-	co.at<double>(1, 1) = rp.y;
-	co.at<double>(2, 1) = 1.f;
-
-	return co;
-}

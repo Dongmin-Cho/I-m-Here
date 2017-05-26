@@ -31,37 +31,36 @@
 #include <sstream>
 #include <dlib/opencv.h>
 #include "classification.h"
-#include "calc_face_img.h"
-using namespace std;
+#include "crop_face_img.h"
 using namespace dlib;
-
+using namespace std;
 int extract_feature(string in_file_path, string out_file_path)
 {
 	string in_file = in_file_path;
 	string out_file = out_file_path;
-	string trained = "/home/wj/work/caffe/extract_descriptor/fitnet.caffemodel";
-	string deply = "/home/wj/work/caffe/extract_descriptor/deploy.prototxt";
-	string meandata = "/home/wj/work/caffe/extract_descriptor/mean.binaryproto";
+	string trained = "/home/wj/work/Im_Here/caffe/extract_descriptor/fitnet.caffemodel";
+	string deply = "/home/wj/work/Im_Here/caffe/extract_descriptor/deploy.prototxt";
+	string meandata = "/home/wj/work/Im_Here/caffe/extract_descriptor/mean.binaryproto";
     string blobname = "fc7";
     Classifier classifier(deply, trained, meandata, "none");
-    int ndepth = 5;
+    int ndepth = 1;
     int ndim = 4096;
     int nimsz = 100;
     cv::Mat faceimg;// = cv::imread(in_file);
     
     frontal_face_detector detector = get_frontal_face_detector();
     shape_predictor sp;
-    deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
+    deserialize("../../../face_recognition/src/shape_predictor_68_face_landmarks.dat") >> sp;
 
     array2d<rgb_pixel> img;
     load_image(img, in_file_path); 
     
-    pyramid_up(img);
+   // pyramid_up(img);
 
-    std::vector<rectangle> dets = detector(img);
+    std::vector<dlib::rectangle> dets = detector(img);
 
     std::vector<full_object_detection> shapes;
-    std::vector<rectangle> rect;
+    std::vector<dlib::rectangle> rect;
 
     for (unsigned long j = 0; j < dets.size(); ++j)
     {
@@ -69,43 +68,47 @@ int extract_feature(string in_file_path, string out_file_path)
         shapes.push_back(shape);
     }
 
-    for (size_t k = 0; k < shapes.size(); k++)
-    {
-        float sum_left_x = 0;
-        float sum_left_y = 0;
-        for(size_t left = 36; left < 47; left ++)
-        {
-            sum_left_x += shapes[k].part(left).x;
-            sum_left_y += shapes[k].part(left).y;
-        }
-        float sum_right_x = 0;
-        float sum_right_y = 0;
-        for(size_t right = 42; right <= 47; right ++)
-        {
-            sum_right_x += shapes[k].part(right).x();
-            sum_right_y += shapes[k].part(right).y();
-        }
-    cv::Point2f eye_loc_L(sum_left_x/6, sum_left_y/6), eye_loc_R(sum_right_x/6, sum_right_y/6);
-    faceimg = toMat(img);
-    cv::Mat input;
-    faceimg = _cropFaceImagebyEYE(faceimg, eye_loc_L, eye_loc_R, 100, 100, 0.4f, 0.38f);
-    cv::resize(faceimg, input, cv::Size(nimsz, nimsz));
-    float *blob = NULL;
-    blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
-	//int search_dot = in_file.find(".");
-	in_file = in_file.substr(in_file.find_last_of("/"),in_file.find_last_of(".")-in_file.find_last_of("/")); //remove all except file name
-	out_file = out_file + in_file +".txt";
-	std::ofstream out(out_file.c_str());
-	if(out.is_open())
+	for (size_t k = 0; k < shapes.size(); k++)
 	{
-		for(int i = 0; i < 4096; i++)
-			out << blob[i] << endl;
+		float sum_left_x = 0;
+		float sum_left_y = 0;
+		for(size_t left = 36; left <= 41; left ++)
+		{
+			sum_left_x += shapes[k].part(left).x();
+			sum_left_y += shapes[k].part(left).y();
+		}
+		float sum_right_x = 0;
+		float sum_right_y = 0;
+		for(size_t right = 42; right <= 47; right ++)
+		{
+			sum_right_x += shapes[k].part(right).x();
+			sum_right_y += shapes[k].part(right).y();
+		}
+		cv::Point2f eye_loc_L(sum_left_x/6, sum_left_y/6), eye_loc_R(sum_right_x/6, sum_right_y/6);
+		faceimg = toMat(img);
+		cv::Mat input;
+		faceimg = _cropFaceImagebyEYE(faceimg, eye_loc_L, eye_loc_R, 100, 100, 0.4f, 0.38f);
+		//faceimg = cv::imread(in_file);
+		cv::resize(faceimg, input, cv::Size(nimsz, nimsz));
+		float *blob = NULL;
+		blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
+		//int search_dot = in_file.find(".");
+		in_file = in_file.substr(in_file.find_last_of("/")+1,in_file.find_last_of(".")-in_file.find_last_of("/")-1); //remove all except file name
+		out_file = out_file + in_file +".txt";
+		cv::imwrite(out_file+".png",faceimg);
+		std::ofstream out(out_file.c_str());
+		if(out.is_open())
+		{
+			for(int i = 0; i < 4096; i++)
+				out << blob[i] << endl;
+		}
+		delete[] blob;
+		out.close();
 	}
-	delete[] blob;
-	out.close();
-	return 1;
+		return 1;
 }
-int main(int argc, char** argv) {//argv[1] = out put folder, argv[2] = input file path *.jpg
+int main(int argc, char** argv) 
+{//argv[1] = out put folder, argv[2] = input file path *.jpg
 
 	if(argc == 1)
 	{
