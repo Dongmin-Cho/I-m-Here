@@ -45,7 +45,7 @@ int extract_feature(string in_file_path, string out_file_path)
     Classifier classifier(deply, trained, meandata, "none");
     int ndepth = 1;
     int ndim = 4096;
-    int nimsz = 100;
+    int nimsz = 244;
     cv::Mat faceimg = cv::imread(in_file);
     
     frontal_face_detector detector = get_frontal_face_detector();
@@ -53,16 +53,21 @@ int extract_feature(string in_file_path, string out_file_path)
     deserialize("../../../face_recognition/src/shape_predictor_68_face_landmarks.dat") >> sp;
 
     array2d<rgb_pixel> img;
-	assign_image(img, cv_image<bgr_pixel>(faceimg));
+	assign_image(img, cv_image<rgb_pixel>(faceimg));
     //load_image(img, in_file_path); 
     
-    //pyramid_up(img);
+    pyramid_up(img);
 
     std::vector<dlib::rectangle> dets = detector(img);
 
     std::vector<full_object_detection> shapes;
     std::vector<dlib::rectangle> rect;
-
+	
+	if(dets.size() == 0)
+	{
+		unlink(in_file.c_str());		
+		return -1;
+	}
     for (unsigned long j = 0; j < dets.size(); ++j)
     {
         full_object_detection shape = sp(img, dets[j]);
@@ -86,14 +91,11 @@ int extract_feature(string in_file_path, string out_file_path)
 			sum_right_y += shapes[k].part(right).y();
 		}
 		cv::Point2f eye_loc_L(sum_left_x/6, sum_left_y/6), eye_loc_R(sum_right_x/6, sum_right_y/6);
-		//faceimg = toMat(img);
 		cv::Mat input;
-		faceimg = _cropFaceImagebyEYE(faceimg, eye_loc_L, eye_loc_R, 100, 100, 0.4f, 0.38f);
-		//faceimg = cv::imread(in_file);
-		cv::resize(faceimg, input, cv::Size(nimsz, nimsz));
+		faceimg = toMat(img);
+		faceimg = _cropFaceImagebyEYE(faceimg, eye_loc_L, eye_loc_R, nimsz, nimsz, 0.4f, 0.38f);
 		float *blob = NULL;
 		blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
-		//int search_dot = in_file.find(".");
 		in_file = in_file.substr(in_file.find_last_of("/")+1,in_file.find_last_of(".")-in_file.find_last_of("/")-1); //remove all except file name
 		out_file = out_file + in_file +".txt";
 		//cv::imwrite(out_file+".png",faceimg);
