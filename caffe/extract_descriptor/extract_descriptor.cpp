@@ -45,7 +45,7 @@ int extract_feature(string in_file_path, string out_file_path)
     Classifier classifier(deply, trained, meandata, "none");
     int ndepth = 1;
     int ndim = 4096;
-    int nimsz = 244;
+    int nimsz = 224;
     cv::Mat faceimg = cv::imread(in_file);
     
     frontal_face_detector detector = get_frontal_face_detector();
