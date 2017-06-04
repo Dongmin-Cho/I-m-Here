@@ -41,28 +41,28 @@ int extract_feature(string in_file_path, string out_file_path)
 	string trained = "/home/wj/work/Im_Here/caffe/extract_descriptor/fitnet.caffemodel";
 	string deply = "/home/wj/work/Im_Here/caffe/extract_descriptor/deploy.prototxt";
 	string meandata = "/home/wj/work/Im_Here/caffe/extract_descriptor/mean.binaryproto";
-    string blobname = "fc7";
-    Classifier classifier(deply, trained, meandata, "none");
-    int ndepth = 1;
-    int ndim = 4096;
-    int nimsz = 100;
-    cv::Mat faceimg = cv::imread(in_file);
+	string blobname = "fc7";
+	Classifier classifier(deply, trained, meandata, "none");
+	int ndepth = 1;
+	int ndim = 4096;
+	int nimsz = 100;
+	cv::Mat faceimg = cv::imread(in_file);
 
-		float *blob = NULL;
-		blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
-		in_file = in_file.substr(in_file.find_last_of("/")+1,in_file.find_last_of(".")-in_file.find_last_of("/")-1); //remove all except file name
-		out_file = out_file + in_file +".txt";
-		//cv::imwrite(out_file+".png",faceimg);
-		std::ofstream out(out_file.c_str());
-		if(out.is_open())
-		{
-			for(int i = 0; i < 4096; i++)
-				out << blob[i] << endl;
-		}
-		delete[] blob;
-		out.close();
+	float *blob = NULL;
+	blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
+	in_file = in_file.substr(in_file.find_last_of("/")+1,in_file.find_last_of(".")-in_file.find_last_of("/")-1); //remove all except file name
+	out_file = out_file + in_file +".txt";
+	//cv::imwrite(out_file+".png",faceimg);
+	std::ofstream out(out_file.c_str());
+	if(out.is_open())
+	{
+		for(int i = 0; i < 4096; i++)
+			out << blob[i] << endl;
 	}
-		return 1;
+	delete[] blob;
+	out.close();
+
+	return 1;
 }
 int main(int argc, char** argv)
 {//argv[1] = out put folder, argv[2] = input file path *.jpg
