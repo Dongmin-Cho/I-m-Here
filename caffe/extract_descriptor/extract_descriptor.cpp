@@ -45,9 +45,11 @@ int extract_feature(string in_file_path, string out_file_path)
 	Classifier classifier(deply, trained, meandata, "none");
 	int ndepth = 1;
 	int ndim = 4096;
-	int nimsz = 100;
+	int nimsz = 224;
 	cv::Mat faceimg = cv::imread(in_file);
 
+	cv::Mat input;
+	cv::resize(faceimg, input, cv::Size(nimsz, nimsz));
 	float *blob = NULL;
 	blob = classifier.Extract_Feature(faceimg, blobname, ndim, ndepth, 1, false);
 	in_file = in_file.substr(in_file.find_last_of("/")+1,in_file.find_last_of(".")-in_file.find_last_of("/")-1); //remove all except file name
