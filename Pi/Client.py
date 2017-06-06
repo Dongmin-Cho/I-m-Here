@@ -2,19 +2,18 @@ import requests
 import time
 import os
 import subprocess
-i = 0
-url = 'http://bwj.iptime.org'
+
+url = 'http://bwj.iptime.org:3000/classAttend/attend'
 pwd = '/home/pi/images'
 
-while i<75:
+while True:
 
-    os.system('fswebcam -r 640*480 -S 20 --no-banner --save /home/pi/images/%H%M%S.jpg')
+    os.system('fswebcam -r 1920*1080 -s brightness=65% --no-banner --save /home/pi/images/%H%M%S.jpg')
     ps = subprocess.Popen(('ls','-tr','images'),stdout=subprocess.PIPE)
     output = subprocess.check_output(('tail','-1'),stdin=ps.stdout)
-#    files = {'media' : open(path,'rb')}
-#    r = requests.post(url,files=files)
-    time.sleep(5)
-    
-    print output
-    i = i+1;
+    path=os.path.join(pwd,output.strip())
+    files = {'media' : open(path,'rb')}
+    res = requests.post(url,files=files)
+    print(res.status_code)
+    print(res.text)
     time.sleep(10)
