@@ -15,6 +15,7 @@ while True:
     files = {'media' : open(path,'rb')}
     try:
         res = requests.post(url,files=files)
+        os.remove(path)
         print(res.status_code)
         print(res.text)
     except:
