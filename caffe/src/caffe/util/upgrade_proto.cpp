@@ -23,16 +23,16 @@ bool UpgradeNetAsNeeded(const string& param_file, NetParameter* param) {
   if (NetNeedsV0ToV1Upgrade(*param)) {
     // NetParameter was specified using the old style (V0LayerParameter); try to
     // upgrade it.
-    LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
-              << "V0LayerParameter: " << param_file;
+    // LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
+    //           << "V0LayerParameter: " << param_file;
     NetParameter original_param(*param);
     if (!UpgradeV0Net(original_param, param)) {
       success = false;
       LOG(ERROR) << "Warning: had one or more problems upgrading "
           << "V0NetParameter to NetParameter (see above); continuing anyway.";
     } else {
-      LOG(INFO) << "Successfully upgraded file specified using deprecated "
-                << "V0LayerParameter";
+      // LOG(INFO) << "Successfully upgraded file specified using deprecated "
+      //           << "V0LayerParameter";
     }
     LOG(WARNING) << "Note that future Caffe releases will not support "
         << "V0NetParameter; use ./build/tools/upgrade_net_proto_text for "
@@ -41,44 +41,44 @@ bool UpgradeNetAsNeeded(const string& param_file, NetParameter* param) {
   }
   // NetParameter uses old style data transformation fields; try to upgrade it.
   if (NetNeedsDataUpgrade(*param)) {
-    LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
-              << "transformation parameters: " << param_file;
+    // LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
+    //           << "transformation parameters: " << param_file;
     UpgradeNetDataTransformation(param);
-    LOG(INFO) << "Successfully upgraded file specified using deprecated "
-              << "data transformation parameters.";
+    // LOG(INFO) << "Successfully upgraded file specified using deprecated "
+    //           << "data transformation parameters.";
     LOG(WARNING) << "Note that future Caffe releases will only support "
                  << "transform_param messages for transformation fields.";
   }
   if (NetNeedsV1ToV2Upgrade(*param)) {
-    LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
-              << "V1LayerParameter: " << param_file;
+    // LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
+    //           << "V1LayerParameter: " << param_file;
     NetParameter original_param(*param);
     if (!UpgradeV1Net(original_param, param)) {
       success = false;
       LOG(ERROR) << "Warning: had one or more problems upgrading "
                  << "V1LayerParameter (see above); continuing anyway.";
     } else {
-      LOG(INFO) << "Successfully upgraded file specified using deprecated "
-                << "V1LayerParameter";
+      // LOG(INFO) << "Successfully upgraded file specified using deprecated "
+      //           << "V1LayerParameter";
     }
   }
   // NetParameter uses old style input fields; try to upgrade it.
   if (NetNeedsInputUpgrade(*param)) {
-    LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
-              << "input fields: " << param_file;
+    // LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
+    //           << "input fields: " << param_file;
     UpgradeNetInput(param);
-    LOG(INFO) << "Successfully upgraded file specified using deprecated "
-              << "input fields.";
+    // LOG(INFO) << "Successfully upgraded file specified using deprecated "
+    //           << "input fields.";
     LOG(WARNING) << "Note that future Caffe releases will only support "
                  << "input layers and not input fields.";
   }
   // NetParameter uses old style batch norm layers; try to upgrade it.
   if (NetNeedsBatchNormUpgrade(*param)) {
-    LOG(INFO) << "Attempting to upgrade batch norm layers using deprecated "
-              << "params: " << param_file;
+    // LOG(INFO) << "Attempting to upgrade batch norm layers using deprecated "
+    //           << "params: " << param_file;
     UpgradeNetBatchNorm(param);
-    LOG(INFO) << "Successfully upgraded batch norm layers using deprecated "
-              << "params.";
+    // LOG(INFO) << "Successfully upgraded batch norm layers using deprecated "
+    //           << "params.";
   }
   return success;
 }
@@ -1079,15 +1079,15 @@ bool UpgradeSolverAsNeeded(const string& param_file, SolverParameter* param) {
   bool success = true;
   // Try to upgrade old style solver_type enum fields into new string type
   if (SolverNeedsTypeUpgrade(*param)) {
-    LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
-              << "'solver_type' field (enum)': " << param_file;
+    // LOG(INFO) << "Attempting to upgrade input file specified using deprecated "
+    //           << "'solver_type' field (enum)': " << param_file;
     if (!UpgradeSolverType(param)) {
       success = false;
       LOG(ERROR) << "Warning: had one or more problems upgrading "
                  << "SolverType (see above).";
     } else {
-      LOG(INFO) << "Successfully upgraded file specified using deprecated "
-                << "'solver_type' field (enum) to 'type' field (string).";
+      // LOG(INFO) << "Successfully upgraded file specified using deprecated "
+      //           << "'solver_type' field (enum) to 'type' field (string).";
       LOG(WARNING) << "Note that future Caffe releases will only support "
                    << "'type' field (string) for a solver's type.";
     }
