@@ -690,9 +690,9 @@ void Net<Dtype>::Backward() {
     }
     const Dtype l2norm_data = std::sqrt(sumsq_data);
     const Dtype l2norm_diff = std::sqrt(sumsq_diff);
-    //LOG(ERROR) << "    [Backward] All net params (data, diff): "
-              //  << "L1 norm = (" << asum_data << ", " << asum_diff << "); "
-              //  << "L2 norm = (" << l2norm_data << ", " << l2norm_diff << ")";
+    LOG(ERROR) << "    [Backward] All net params (data, diff): "
+               << "L1 norm = (" << asum_data << ", " << asum_diff << "); "
+               << "L2 norm = (" << l2norm_data << ", " << l2norm_diff << ")";
   }
 }
 
