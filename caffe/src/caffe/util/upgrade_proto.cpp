@@ -69,8 +69,8 @@ bool UpgradeNetAsNeeded(const string& param_file, NetParameter* param) {
     UpgradeNetInput(param);
     // LOG(INFO) << "Successfully upgraded file specified using deprecated "
     //           << "input fields.";
-    LOG(WARNING) << "Note that future Caffe releases will only support "
-                 << "input layers and not input fields.";
+    // LOG(WARNING) << "Note that future Caffe releases will only support "
+    //              << "input layers and not input fields.";
   }
   // NetParameter uses old style batch norm layers; try to upgrade it.
   if (NetNeedsBatchNormUpgrade(*param)) {
