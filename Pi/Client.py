@@ -13,7 +13,12 @@ while True:
     output = subprocess.check_output(('tail','-1'),stdin=ps.stdout)
     path=os.path.join(pwd,output.strip())
     files = {'media' : open(path,'rb')}
-    res = requests.post(url,files=files)
-    print(res.status_code)
-    print(res.text)
-    time.sleep(10)
+    try:
+        res = requests.post(url,files=files)
+        os.remove(path)
+        print(res.status_code)
+        print(res.text)
+    except:
+        time.sleep(5)
+        continue
+    time.sleep(5)
