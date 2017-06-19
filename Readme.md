@@ -23,9 +23,7 @@ sudo apt-get install cmake
 
 ```
 git submodule init
-
 git submodule update
-
 make install
 ```
 
@@ -33,11 +31,10 @@ make install
 
 ### return SUCCESS;
 #### Members:
-##### Sejin Park
-##### Dongmin Cho
-##### Seyeon Moon
-##### Woojin Byun
-
+    Sejin Park
+    Dongmin Cho
+    Seyeon Moon
+    Woojin Byun
 All members are students at Ajou Univ.
 
 Last, Thank you to Young K. Hwang, COO of Alchera inc. for mentoring.
